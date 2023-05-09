@@ -21,7 +21,7 @@ register = catchAsync(async (req, res) => {
   const { id, avatarUrl } = newUserWithToken;
 
   res.status(201).json({
-    user: { id, name, email, avatarUrl },
+    user: { name, email, avatarUrl },
     token,
   });
 });
@@ -36,22 +36,19 @@ login = catchAsync(async (req, res) => {
 
   const payload = { id: user._id };
   const token = jwt.sign(payload, SECRET_KEY, { expiresIn: "24h" });
-  const { id, name, avatarUrl } = user;
+  const { name, avatarUrl } = user;
   await User.findByIdAndUpdate(user._id, { token });
 
   res.status(200).json({
-    user: { id, name, email, avatarUrl },
+    user: { name, email, avatarUrl },
     token,
   });
 });
 
 getCurrent = catchAsync(async (req, res) => {
-  const { id, name, email, avatarUrl, token } = req.user;
+  const { name, email, avatarUrl } = req.user;
 
-  res.status(200).json({
-    user: { id, name, email, avatarUrl },
-    token,
-  });
+  res.status(200).json({name, email, avatarUrl });
 });
 
 logout = catchAsync(async (req, res) => {
