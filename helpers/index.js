@@ -1,7 +1,7 @@
 const catchAsync = require('./catchAsync');
-const errorApp = require('./errorApp');
+const appError = require('./appError');
 
 module.exports = {
   catchAsync,
-  errorApp,
+  appError,
 };

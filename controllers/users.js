@@ -1,33 +1,73 @@
-const { catchAsync, errorApp } = require("../helpers");
-const { User, setHashPassword } = require("../models/user");
+const jwt = require("jsonwebtoken");
+const { catchAsync, appError } = require("../helpers");
+const { User, setHashPassword, comparePassword } = require("../models/user");
+const { SECRET_KEY } = process.env;
 
 register = catchAsync(async (req, res) => {
-  console.log("HELLO")
-  const { email, password } = req.body;
+  const { name, email, password } = req.body;
   const user = await User.findOne({ email });
 
-  if (user) throw errorApp(409, "Email in use");
-  
+  if (user) throw appError(409, "Email in use");
 
-  // const avatarURL = gravatar.url(email);
   const hashPassword = await setHashPassword(password);
-  // const verificationToken = uuidv4();
-  // const newUser = await User.create({ email, password: hashPassword, avatarURL, verificationToken});
+  const newUser = await User.create({ name, email, password: hashPassword });
+  const payload = { id: newUser._id };
+  const token = jwt.sign(payload, SECRET_KEY, { expiresIn: "24h" });
+  const newUserWithToken = await User.findByIdAndUpdate(
+    newUser._id,
+    { token },
+    { new: true }
+  );
+  const { id, avatarUrl } = newUserWithToken;
 
-  const newUser = await User.create({ email, password: hashPassword});
-  // const mail = {
-  //   to: email,
-  //   subject: "Confirm registration",
-  //   html: `<a href="http://localhost:3000/api/users/verify/${verificationToken}" target="blank">To complete the registration, click confirm your email</a>`,
-  // };
-
-  // await sendEmail(mail);
-
-  console.log("FAIL ?")
-  res.status(201).json({ user: {email, subscription: newUser.subscription, }});
+  res.status(201).json({
+    user: { id, name, email, avatarUrl },
+    token,
+  });
 });
 
+login = catchAsync(async (req, res) => {
+  const { email, password } = req.body;
+  const user = await User.findOne({ email });
+  if (!user) throw appError(401, "Email or password is wrong");
+
+  const comparedPassword = await comparePassword(password, user.password);
+  if (!comparedPassword) throw appError(401, "Email or password is wrong");
+
+  const payload = { id: user._id };
+  const token = jwt.sign(payload, SECRET_KEY, { expiresIn: "24h" });
+  const { id, name, avatarUrl } = user;
+  await User.findByIdAndUpdate(user._id, { token });
+
+  res.status(200).json({
+    user: { id, name, email, avatarUrl },
+    token,
+  });
+});
+
+getCurrent = catchAsync(async (req, res) => {
+  const { id, name, email, avatarUrl, token } = req.user;
+
+  res.status(200).json({
+    user: { id, name, email, avatarUrl },
+    token,
+  });
+});
+
+logout = catchAsync(async (req, res) => {
+  const { _id } = req.user;
+
+  if (!_id) {
+    throw AppError(401, "Not authorized");
+  }
+
+  await User.findByIdAndUpdate(_id, { token: "" });
+  res.status(204).json();
+});
 
 module.exports = {
   register,
+  login,
+  getCurrent,
+  logout,
 };
