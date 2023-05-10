@@ -15,4 +15,4 @@ const categories = [
   "Vegetarian",
 ];
 
-module.exports = {categories};
+module.exports = { categories };
