@@ -12,6 +12,18 @@ getCategoriesPreview  = catchAsync(async (req, res) => {
   res.status(200).json({result});
 });
 
+getCategoriesList = catchAsync(async (req, res) => {
+  const result = await Recipe.aggregate([
+    { $match: { category: { $exists: true }} },
+    { $group: { _id: "$category"}},
+    { $sort: { _id: 1 } },
+  ]);
+
+  const categories = result.map(item => item._id);
+
+  res.status(200).json({categories});
+});
+
 getRecipesByCategory  = catchAsync(async (req, res) => {
   // const { category, skip, limit} = req.params;
   const { category } = req.params;
@@ -33,5 +45,6 @@ getRecipesByCategory  = catchAsync(async (req, res) => {
 
 module.exports = {
   getCategoriesPreview,
+  getCategoriesList,
   getRecipesByCategory,
 };
