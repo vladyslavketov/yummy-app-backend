@@ -47,6 +47,7 @@ login = catchAsync(async (req, res) => {
 
 getCurrent = catchAsync(async (req, res) => {
   const { name, email, avatarUrl } = req.user;
+  console.log(req.user);
 
   res.status(200).json({name, email, avatarUrl });
 });
