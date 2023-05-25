@@ -6,6 +6,7 @@ dotenv.config({ path: "./.env" });
 
 const authRouter = require("./routes/api/users");
 const recipesRouter = require("./routes/api/recipes");
+const favoriteRouter = require("./routes/api/favorite");
 
 const app = express();
 const formatsLogger = app.get("env") === "development" ? "dev" : "short";
@@ -17,6 +18,7 @@ app.use(express.static("public"));
 
 app.use("/api/users", authRouter);
 app.use("/api/recipes", recipesRouter);
+app.use("/api/favorite", favoriteRouter);
 
 app.all("*", (req, res) => {
   res.status(404).json({ message: "Not found" });
