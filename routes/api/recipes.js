@@ -15,6 +15,6 @@ router.route("/favorites/:recipeId")
   .put(auth, addToFavorite)
   .patch(auth, deleteFromFavorite);
 
-router.route("/:recipeId").get(getRecipeById); // пошук рецепту по ІД
+router.route("/:recipeId").get(auth, getRecipeById); // пошук рецепту по ІД
 
 module.exports = router;

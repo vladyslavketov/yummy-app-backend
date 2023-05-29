@@ -133,7 +133,14 @@ getRecipeById  = catchAsync(async (req, res) => {
     },
   ]);
 
-  res.status(200).json(result[0]);
+  const userId = req.user._id.toString();
+  const { favorites } = await Recipe.findOne({ _id: recipeId });
+  const isInFavorites = favorites.some(favorite => favorite.userId === userId);
+  
+  let updResult = {...result[0], inFavorites: false}
+  if (isInFavorites) updResult = {...result[0], inFavorites: true}
+  
+  res.status(200).json(updResult);
 });
 
 getRecipesBySearchTitle  = catchAsync(async (req, res) => {
@@ -257,3 +264,17 @@ module.exports = {
   addToFavorite,
   deleteFromFavorite
 };
+
+
+// { $set: {
+//   inFavorites: {}
+//   }
+// },
+
+// {
+//   $addFields: {
+//     inFavorites: {
+//       $exists: true
+//     }
+//   }
+// },
