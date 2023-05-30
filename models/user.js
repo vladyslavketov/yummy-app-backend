@@ -21,6 +21,7 @@ const userSchema = new Schema(
       default:
         "https://img.freepik.com/fotos-gratis/amor-romance-perfurado-coracao-de-papel_53876-87.jpg",
     },
+    shoppingList: [],
     // subscription: {
     //   type: String,
     //   enum: ["starter", "pro", "business"],
@@ -39,10 +40,6 @@ const userSchema = new Schema(
       type: String,
       default: null,
     },
-    favorites: {
-      type: Array,
-      default: [],
-    }
   },
   { versionKey: false, timestamps: true }
 );

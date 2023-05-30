@@ -4,7 +4,7 @@ const { catchAsync, appError } = require("../helpers");
 const { Recipe } = require("../models/recipeModel");
 const ObjectId = require("mongodb").ObjectId;
 
-getCategoriesPreview  = catchAsync(async (req, res) => {
+getCategoriesPreview = catchAsync(async (req, res) => {
   const result = await Recipe.aggregate([
     { $match: { category: {$in: ['Breakfast', 'Miscellaneous', 'Chicken', 'Dessert']} } },
     { $group: { _id: "$category", recipes: { $push: "$$ROOT" } } },

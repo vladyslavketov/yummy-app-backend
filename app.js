@@ -6,18 +6,19 @@ dotenv.config({ path: "./.env" });
 
 const authRouter = require("./routes/api/users");
 const recipesRouter = require("./routes/api/recipes");
+const ingredientsRouter = require("./routes/api/ingredients");
 
 const app = express();
 const formatsLogger = app.get("env") === "development" ? "dev" : "short";
 
 app.use(logger(formatsLogger));
-// app.use(cors({origin: 'http://localhost:3000'}));
 app.use(cors());
 app.use(express.json());
 app.use(express.static("public"));
 
 app.use("/api/users", authRouter);
 app.use("/api/recipes", recipesRouter);
+app.use("/api/ingredients", ingredientsRouter);
 
 app.all("*", (req, res) => {
   res.status(404).json({ message: "Not found" });

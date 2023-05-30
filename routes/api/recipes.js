@@ -1,6 +1,7 @@
 const express = require("express");
-const { getCategoriesPreview, getRecipesByCategory, getCategoriesList, getRecipeById, getRecipesBySearchTitle, getFavorite, addToFavorite, deleteFromFavorite } = require("../../controllers/recipes");
 const auth = require("../../middlewares/auth");
+
+const { getCategoriesPreview, getRecipesByCategory, getCategoriesList, getRecipeById, getRecipesBySearchTitle, getFavorite, addToFavorite, deleteFromFavorite } = require("../../controllers/recipes");
 
 const router = express.Router();
 
